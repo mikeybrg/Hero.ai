@@ -1,47 +1,26 @@
 import OpenAI from "openai";
 
-export const config = {
-  api: {
-    bodyParser: false, // disable automatic parsing so we can handle raw stream
-  },
-};
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-export default async function handler(req, res) {
+export default async function handler(request, response) {
   try {
-    if (req.method !== "POST") {
-      res.status(405).json({ error: "Method not allowed" });
-      return;
-    }
+    const body = await request.json();
+    const prompt = body.prompt || "Make a simple platformer game with a ball";
 
-    // Safely read the request body
-    let body = "";
-    req.on("data", (chunk) => {
-      body += chunk.toString();
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "You generate Phaser.js game code." },
+        { role: "user", content: `Create a playable Phaser.js game: ${prompt}` },
+      ],
     });
 
-    req.on("end", async () => {
-      const data = JSON.parse(body || "{}");
-      const prompt = data.prompt || "make a simple pong game";
+    const gameCode = completion.choices[0].message.content;
 
-      const completion = await client.responses.create({
-        model: "gpt-4.1-mini",
-        input: [
-          {
-            role: "user",
-            content: `Generate a playable HTML, CSS, and JS game that fits this idea: "${prompt}". Include <style> and <script> tags in a single HTML file.`,
-          },
-        ],
-      });
-
-      const html = completion.output[0]?.content[0]?.text || "";
-      res.status(200).json({ html });
-    });
-  } catch (err) {
-    console.error("Server Error:", err);
-    res.status(500).json({ error: err.message || "Internal Server Error" });
+    return response.status(200).json({ code: gameCode });
+  } catch (error) {
+    console.error("Error:", error);
+    return response.status(500).json({ error: error.message });
   }
 }
+
