@@ -1,29 +1,24 @@
-document.getElementById("generateBtn").addEventListener("click", generateGame);
+document.getElementById('generateBtn').addEventListener('click', async () => {
+  const prompt = document.getElementById('prompt').value;
+  const output = document.getElementById('output');
 
-async function generateGame() {
-  const prompt = document.getElementById("prompt").value.trim();
-  const container = document.getElementById("gameContainer");
-
-  if (!prompt) {
-    container.innerHTML = "<p>Please enter a game idea!</p>";
-    return;
-  }
-
-  container.innerHTML = "<p>⚙️ Generating your game...</p>";
+  output.innerHTML = '⏳ Generating game...';
 
   try {
-    const response = await fetch("/api/game", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const res = await fetch('/api/game', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt }),
     });
 
-    const data = await response.json();
-    container.innerHTML =
-      data.html ||
-      "<p>❌ Error generating game. Make sure the backend is set up.</p>";
+    const data = await res.json();
+
+    if (data.gameHTML) {
+      output.innerHTML = data.gameHTML;
+    } else {
+      output.innerHTML = '❌ Error generating game.';
+    }
   } catch (err) {
-    console.error(err);
-    container.innerHTML = "<p>❌ Server error. Try again later.</p>";
+    output.innerHTML = '⚠️ Server error.';
   }
-}
+});
