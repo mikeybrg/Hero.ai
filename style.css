@@ -1,0 +1,35 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 40px;
+  background: #fafafa;
+}
+
+input {
+  padding: 10px;
+  width: 80%;
+  max-width: 400px;
+  margin-top: 10px;
+}
+
+button {
+  padding: 10px 15px;
+  margin-top: 10px;
+  background: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0059c9;
+}
+
+#gameContainer {
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 8px;
+}
