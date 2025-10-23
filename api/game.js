@@ -1,43 +1,33 @@
-// api/game.js
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
   try {
-    const { prompt } = await req.json();
-    const apiKey = process.env.OPENAI_API_KEY;
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a game generator. Create playable HTML + JavaScript games in one file using only HTML, CSS, and JS.",
-          },
-          {
-            role: "user",
-            content: `Create a playable browser game based on this idea: ${prompt}. Keep it fun, simple, and self-contained.`,
-          },
-        ],
-        max_tokens: 1000,
-      }),
+    // Parse the body manually
+    let body = "";
+    for await (const chunk of req) {
+      body += chunk;
+    }
+    const data = JSON.parse(body);
+
+    const prompt = data.prompt || "make a simple game";
+
+    const completion = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: `Create an HTML, CSS, and JS game based on this idea: ${prompt}`,
     });
 
-    const data = await response.json();
-    const gameCode = data.choices?.[0]?.message?.content || "<p>Error generating game.</p>";
+    const html = completion.output[0]?.content[0]?.text || "";
 
-    return res.status(200).json({ html: gameCode });
+    res.status(200).json({ html });
   } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ error: "Server error" });
-  }
-}
+    console.error("Error generating game:", error);
+    res.status(500).json({ error: error.message });
+
