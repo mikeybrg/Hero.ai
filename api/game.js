@@ -1,39 +1,36 @@
-import OpenAI from "openai";
-
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST requests allowed" });
-  }
-
   try {
-    // ✅ Parse incoming JSON body safely
-    let body = "";
-    await new Promise((resolve) => {
-      req.on("data", (chunk) => (body += chunk));
-      req.on("end", resolve);
+    const { prompt } = req.body || {};
+    if (!prompt) {
+      return res.status(400).json({ error: 'Missing prompt' });
+    }
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are a helpful game creator that generates playable HTML, CSS, and JavaScript 2D games using Phaser.js. Output only HTML code that can run in browser.',
+          },
+          { role: 'user', content: prompt },
+        ],
+      }),
     });
-    const data = JSON.parse(body);
-    const prompt = data.prompt || "Make a simple game using Phaser.js";
 
-    // ✅ Initialize OpenAI client
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    const data = await response.json();
 
-    // ✅ Ask OpenAI for Phaser.js game code
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "You generate short playable Phaser.js game code." },
-        { role: "user", content: `Generate a playable Phaser.js game: ${prompt}` },
-      ],
-    });
+    const gameHTML = data.choices?.[0]?.message?.content || '';
 
-    const gameCode = completion.choices[0].message.content;
-
-    return res.status(200).json({ code: gameCode });
+    return res.status(200).json({ gameHTML });
   } catch (err) {
-    console.error("Server error:", err);
-    return res.status(500).json({ error: err.message });
+    console.error('Error in /api/game:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
