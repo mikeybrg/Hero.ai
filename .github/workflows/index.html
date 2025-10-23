@@ -1,15 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>GreenPeak AI</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <h1>GreenPeak AI</h1>
-    <textarea id="input" placeholder="Ask something..."></textarea>
-    <button onclick="send()">Send</button>
-    <div id="output"></div>
-    <script src="script.js"></script>
-  </body>
+<html>
+<head>
+  <title>GreenPeak AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 40px; }
+    input, button { padding: 10px; margin-top: 10px; width: 80%; max-width: 400px; }
+    #gameContainer { margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <h1>🎮 GreenPeak AI Game Creator</h1>
+  <p>Describe your game idea below:</p>
+  <input id="prompt" placeholder="Example: make a simple pong game" />
+  <button onclick="generateGame()">Generate Game</button>
+
+  <div id="gameContainer"></div>
+
+  <script>
+    async function generateGame() {
+      const prompt = document.getElementById("prompt").value;
+      const container = document.getElementById("gameContainer");
+      container.innerHTML = "<p>⏳ Generating your game...</p>";
+
+      const response = await fetch("/api/game", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+
+      const data = await response.json();
+      container.innerHTML = data.html || "<p>❌ Error generating game.</p>";
+    }
+  </script>
+</body>
 </html>
