@@ -1,49 +1,41 @@
-// public/game.js
-// Frontend logic for Hero.AI
+async function generateGame() {
+  const status = document.getElementById("status");
+  const result = document.getElementById("result");
+  result.textContent = "";
+  status.textContent = "⏳ Generating game...";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const generateBtn = document.getElementById("generateBtn");
-  const resultDiv = document.getElementById("result");
-  const promptInput = document.getElementById("prompt");
+  try {
+    const prompt = "Generate a simple hero game idea.";
+    const response = await fetch("/api/generate-game", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
 
-  generateBtn.addEventListener("click", async () => {
-    const prompt = promptInput.value.trim();
-    if (!prompt) {
-      resultDiv.textContent = "⚠️ Please enter a prompt first.";
-      return;
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
     }
 
-    resultDiv.textContent = "⏳ Generating your game...";
+    const data = await response.json();
+    console.log("Generated game:", data);
 
-    try {
-      const response = await fetch("/api/game", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Failed to fetch from backend.");
-      }
-
-      const data = await response.json();
-      const gameText = data.result;
-
-      if (!gameText) {
-        resultDiv.textContent = "❌ No response received from AI.";
-        return;
-      }
-
-      // Display the game idea
-      resultDiv.innerHTML = `
-        <h3>🕹️ Your AI-Generated Game:</h3>
-        <pre>${gameText}</pre>
+    if (data.game) {
+      result.innerHTML = `
+        <h2>${data.game.title}</h2>
+        <p>${data.game.description}</p>
+        <ul>${data.game.actions.map(a => `<li>${a}</li>`).join("")}</ul>
       `;
-    } catch (err) {
-      console.error("Error generating game:", err);
-      resultDiv.textContent = "❌ Error generating game. Check console for details.";
+      status.textContent = "✅ Game generated!";
+    } else {
+      status.textContent = "❌ No game returned.";
     }
-  });
+  } catch (err) {
+    console.error("Error generating game:", err);
+    status.textContent = "❌ Error generating game. Check console for details.";
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("generateBtn").addEventListener("click", generateGame);
 });
 
