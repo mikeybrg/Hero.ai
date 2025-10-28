@@ -1,8 +1,17 @@
 {
   "name": "hero-ai",
   "version": "1.0.0",
-  "type": "module",
+  "description": "Hero.ai web app",
+  "main": "index.js",
+  "scripts": {
+    "dev": "echo \"Starting local dev...\" && npx serve public",
+    "build": "echo \"No build step needed, just deploying public folder\"",
+    "start": "npx serve public"
+  },
+  "keywords": [],
+  "author": "Michael",
+  "license": "MIT",
   "dependencies": {
-    "openai": "^4.0.0"
+    "serve": "^14.2.0"
   }
 }
