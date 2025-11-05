@@ -9,11 +9,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing prompt" });
     }
 
-    // TEMPORARY FAKE RESPONSE so we can confirm API works
+    // TEMPORARY TEST RESPONSE
     const game = {
       title: "Hero AI Test Game",
-      description: "This is a test game. If you see this, your backend works!",
-      actions: ["Attack", "Defend", "Explore"]
+      description: "If you see this, your backend route works.",
+      actions: ["Run", "Jump", "Explore"]
     };
 
     return res.status(200).json({ game });
