@@ -1,6 +1,5 @@
 {
-  "type": "module",
   "dependencies": {
-    "openai": "^4.23.0"
+    "axios": "^1.6.2"
   }
 }
