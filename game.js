@@ -27,10 +27,15 @@ async function generateGame() {
     }
 
     status.textContent = "✅ Game generated!";
+
+    // ✅ Display returned gameCode safely
     result.innerHTML = `
-      <h2>${data.game.title}</h2>
-      <p>${data.game.description}</p>
-      <ul>${data.game.actions.map(a => `<li>${a}</li>`).join("")}</ul>
+      <h2>Backend Working ✅</h2>
+      <p>Your prompt:</p>
+      <pre>${prompt}</pre>
+
+      <h3>Generated Code:</h3>
+      <pre>${data.gameCode}</pre>
     `;
 
   } catch (err) {
