@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "Missing prompt" });
     }
 
-    // ✅ Call OpenAI using REST API (NO SDK → NO ESM ERRORS)
+    // ✅ Call OpenAI using REST API
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
@@ -44,12 +44,14 @@ module.exports = async function handler(req, res) {
     );
 
     const gameCode = response.data.choices[0].message.content;
-
     return res.status(200).json({ gameCode });
 
   } catch (err) {
-    console.error("API ERROR:", err.response?.data || err);
-    return res.status(500).json({ error: "Server error" });
+    console.error("OPENAI ERROR:", err?.response?.data || err);
+    return res.status(500).json({
+      error: "OpenAI Error",
+      details: err?.response?.data || String(err)
+    });
   }
 };
 
