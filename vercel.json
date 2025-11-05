@@ -7,7 +7,9 @@
     { "src": "api/generate-game.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1.js" },
+    { "src": "/api/generate-game", "dest": "/api/generate-game.js" },
+    { "src": "/game.js", "dest": "/game.js" },
+    { "src": "/style.css", "dest": "/style.css" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
