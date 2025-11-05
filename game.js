@@ -1,4 +1,4 @@
-// /game.js - FRONTEND
+// /game.js
 
 async function generateGame() {
   const status = document.getElementById("status");
@@ -11,7 +11,7 @@ async function generateGame() {
   }
 
   status.textContent = "⏳ Generating game...";
-  result.textContent = "";
+  result.innerHTML = "";
 
   try {
     const response = await fetch("/api/generate-game", {
@@ -28,19 +28,18 @@ async function generateGame() {
 
     status.textContent = "✅ Game generated!";
 
-    // ✅ Display returned gameCode safely
+    // ✅ Create canvas
     result.innerHTML = `
-      <h2>Backend Working ✅</h2>
-      <p>Your prompt:</p>
-      <pre>${prompt}</pre>
-
-      <h3>Generated Code:</h3>
-      <pre>${data.gameCode}</pre>
+      <h2>Your Game</h2>
+      <canvas id="gameCanvas" width="800" height="600" style="background:black;"></canvas>
     `;
+
+    // ✅ Run the generated game code
+    eval(data.gameCode);
 
   } catch (err) {
     console.error("Frontend Error:", err);
-    status.textContent = "❌ Error generating game. Check console.";
+    status.textContent = "❌ Error generating game.";
   }
 }
 
