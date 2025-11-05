@@ -3,6 +3,12 @@
 async function generateGame() {
   const status = document.getElementById("status");
   const result = document.getElementById("result");
+  const prompt = document.getElementById("prompt").value.trim();
+
+  if (!prompt) {
+    status.textContent = "⚠️ Please type a game idea first.";
+    return;
+  }
 
   status.textContent = "⏳ Generating game...";
   result.textContent = "";
@@ -11,7 +17,7 @@ async function generateGame() {
     const response = await fetch("/api/generate-game", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: "test prompt" })
+      body: JSON.stringify({ prompt })
     });
 
     const data = await response.json();
@@ -21,15 +27,14 @@ async function generateGame() {
     }
 
     status.textContent = "✅ Game generated!";
-
-    // Show the returned game
     result.innerHTML = `
       <h2>${data.game.title}</h2>
       <p>${data.game.description}</p>
       <ul>${data.game.actions.map(a => `<li>${a}</li>`).join("")}</ul>
     `;
-  } catch (error) {
-    console.error(error);
+
+  } catch (err) {
+    console.error("Frontend Error:", err);
     status.textContent = "❌ Error generating game. Check console.";
   }
 }
@@ -37,3 +42,4 @@ async function generateGame() {
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("generateBtn").addEventListener("click", generateGame);
 });
+
