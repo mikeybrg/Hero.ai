@@ -17,7 +17,13 @@ async function generateGame() {
     const response = await fetch("/api/generate-game", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({
+  prompt,
+  type: document.getElementById("gameType").value,
+  theme: document.getElementById("theme").value,
+  difficulty: document.getElementById("difficulty").value
+})
+
     });
 
     const data = await response.json();
