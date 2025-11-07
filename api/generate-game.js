@@ -12,6 +12,9 @@ export default async function handler(req, res) {
     for await (const chunk of req) body += chunk;
     const data = JSON.parse(body || "{}");
     const prompt = (data.prompt || "").toLowerCase().trim();
+const type = (data.type || "").toLowerCase();
+const theme = (data.theme || "").toLowerCase();
+const difficulty = (data.difficulty || "").toLowerCase();
 
     if (!prompt) {
       return res.status(400).json({ error: "Missing prompt" });
