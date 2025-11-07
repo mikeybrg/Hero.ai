@@ -1,22 +1,28 @@
-<label>Game Type</label>
-<select id="gameType">
-  <option>Pong</option>
-  <option>Snake</option>
-  <option>Flappy</option>
-  <option>Space Shooter</option>
-</select>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hero.ai – AI Game Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
 
-<label>Theme</label>
-<select id="theme">
-  <option>Retro</option>
-  <option>Space</option>
-  <option>Neon</option>
-  <option>Minimal</option>
-</select>
+<body>
+  <h1>Hero.ai – AI Game Generator</h1>
 
-<label>Difficulty</label>
-<select id="difficulty">
-  <option>Easy</option>
-  <option>Medium</option>
-  <option>Hard</option>
-</select>
+  <div class="container">
+    <textarea id="prompt" placeholder="Describe the game you want..."></textarea>
+
+    <button id="generateBtn">Generate Game</button>
+
+    <div id="output"></div>
+
+    <!-- ✅ THE GAME CANVAS (THIS WAS MISSING) -->
+    <div class="game-container">
+      <canvas id="gameCanvas" width="600" height="400"></canvas>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
