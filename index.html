@@ -1,87 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Hero.ai – AI Game Generator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<label>Game Type</label>
+<select id="gameType">
+  <option>Pong</option>
+  <option>Snake</option>
+  <option>Flappy</option>
+  <option>Space Shooter</option>
+</select>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      text-align: center;
-      padding: 40px;
-    }
+<label>Theme</label>
+<select id="theme">
+  <option>Retro</option>
+  <option>Space</option>
+  <option>Neon</option>
+  <option>Minimal</option>
+</select>
 
-    h1 {
-      font-size: 32px;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 80%;
-      max-width: 500px;
-      padding: 14px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: none;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      background: #222;
-      color: white;
-    }
-
-    button {
-      padding: 14px 26px;
-      font-size: 16px;
-      background: #4CAF50;
-      border: none;
-      border-radius: 6px;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #45a049;
-    }
-
-    #status {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #f8f8f8;
-    }
-
-    #result {
-      margin-top: 30px;
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: left;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      font-size: 16px;
-      line-height: 1.5;
-    }
-  </style>
-</head>
-
-<body>
-
-  <h1>Hero.ai – AI Game Generator</h1>
-
-  <input id="prompt" placeholder="Describe your game... Example: 'Make a simple space shooter'" />
-
-  <br>
-
-  <button id="generateBtn">Generate Game</button>
-
-  <p id="status"></p>
-  <div id="result"></div>
-
-  <!-- Load frontend logic -->
-  <script src="game.js"></script>
-
-</body>
-</html>
+<label>Difficulty</label>
+<select id="difficulty">
+  <option>Easy</option>
+  <option>Medium</option>
+  <option>Hard</option>
+</select>
