@@ -15,6 +15,23 @@ export default async function handler(req, res) {
 const type = (data.type || "").toLowerCase();
 const theme = (data.theme || "").toLowerCase();
 const difficulty = (data.difficulty || "").toLowerCase();
+let chosen = null;
+
+if (type.includes("pong")) {
+    chosen = templates.pong;
+}
+else if (type.includes("snake")) {
+    chosen = templates.snake;
+}
+else if (type.includes("flappy")) {
+    chosen = templates.flappy;
+}
+else if (type.includes("space shooter")) {
+    chosen = templates.shooter;
+}
+else {
+    chosen = templates.pong; // default fallback
+}
 
     if (!prompt) {
       return res.status(400).json({ error: "Missing prompt" });
