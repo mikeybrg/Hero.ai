@@ -1,4 +1,4 @@
-// /game.js
+// /game.js - frontend that runs returned template code
 
 async function generateGame() {
   const status = document.getElementById("status");
@@ -21,29 +21,29 @@ async function generateGame() {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
-      throw new Error(data.error || "Unknown error");
+      status.textContent = "❌ Error: " + (data.error || "Server error");
+      console.error(data);
+      return;
     }
 
-    status.textContent = "✅ Game generated!";
-
-    // ✅ Create canvas
-    result.innerHTML = `
-      <h2>Your Game</h2>
-      <canvas id="gameCanvas" width="800" height="600" style="background:black;"></canvas>
-    `;
-
-    // ✅ Run the generated game code
-    eval(data.gameCode);
-
+    // make canvas area and run code
+    result.innerHTML = '<h2>Your Game</h2><canvas id="gameCanvas" style="background:#000;display:block;margin:0 auto;"></canvas>';
+    // run returned game JS
+    try {
+      eval(data.gameCode);
+      status.textContent = "✅ Game generated!";
+    } catch (e) {
+      console.error("Error running game code", e);
+      status.textContent = "❌ Error running game code (see console).";
+      result.innerHTML += "<pre style='color:#f88;'>" + String(e) + "</pre>";
+    }
   } catch (err) {
-    console.error("Frontend Error:", err);
-    status.textContent = "❌ Error generating game.";
+    console.error("Fetch error:", err);
+    status.textContent = "❌ Network error. Check console.";
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("generateBtn").addEventListener("click", generateGame);
 });
-
