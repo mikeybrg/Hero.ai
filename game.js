@@ -53,3 +53,23 @@ async function generateGame() {
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("generateBtn").addEventListener("click", generateGame);
 });
+
+document.getElementById("publishBtn").addEventListener("click", async () => {
+  const code = document.getElementById("output").innerText;
+  const title = document.getElementById("prompt").value;
+
+  const response = await fetch("/api/save-game", {
+    method: "POST",
+    body: JSON.stringify({ title, code })
+  });
+
+  const data = await response.json();
+
+  if (data.success) {
+    document.getElementById("publishOutput").innerHTML =
+      `✅ Game published! <a href="${data.url}" target="_blank">${data.url}</a>`;
+  } else {
+    document.getElementById("publishOutput").innerHTML =
+      "❌ Could not publish (server error)";
+  }
+});
