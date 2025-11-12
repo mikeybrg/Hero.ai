@@ -1,75 +1,42 @@
-// /game.js - frontend that runs returned template code
+const status = document.getElementById("status");
+const gameCode = document.getElementById("gameCode");
+const button = document.getElementById("generateBtn");
+
+button.addEventListener("click", generateGame);
 
 async function generateGame() {
-  const status = document.getElementById("status");
-  const result = document.getElementById("result");
   const prompt = document.getElementById("prompt").value.trim();
-
   if (!prompt) {
-    status.textContent = "⚠️ Please type a game idea first.";
+    alert("Please describe your game first!");
     return;
   }
 
-  status.textContent = "⏳ Generating game...";
-  result.innerHTML = "";
+  status.textContent = "🎮 Generating game...";
+  gameCode.textContent = "";
 
   try {
-    const response = await fetch("/api/generate-game", {
+    const res = await fetch("/api/generate-game", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-  prompt,
-  type: document.getElementById("gameType").value,
-  theme: document.getElementById("theme").value,
-  difficulty: document.getElementById("difficulty").value
-})
-
+      body: JSON.stringify({ prompt })
     });
 
-    const data = await response.json();
-    if (!response.ok) {
-      status.textContent = "❌ Error: " + (data.error || "Server error");
-      console.error(data);
-      return;
+    // Handle raw text or JSON errors
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error("Server returned non-JSON: " + text);
     }
 
-    // make canvas area and run code
-    result.innerHTML = '<h2>Your Game</h2><canvas id="gameCanvas" style="background:#000;display:block;margin:0 auto;"></canvas>';
-    // run returned game JS
-    try {
-      eval(data.gameCode);
-      status.textContent = "✅ Game generated!";
-    } catch (e) {
-      console.error("Error running game code", e);
-      status.textContent = "❌ Error running game code (see console).";
-      result.innerHTML += "<pre style='color:#f88;'>" + String(e) + "</pre>";
-    }
+    if (data.error) throw new Error(data.error);
+
+    status.textContent = "✅ Game generated!";
+    gameCode.textContent = data.code || "No code returned.";
   } catch (err) {
-    console.error("Fetch error:", err);
-    status.textContent = "❌ Network error. Check console.";
+    console.error("Frontend Error:", err);
+    status.textContent = "❌ Error generating game.";
+    gameCode.textContent = err.message;
   }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("generateBtn").addEventListener("click", generateGame);
-});
-
-document.getElementById("publishBtn").addEventListener("click", async () => {
-  const code = document.getElementById("output").innerText;
-  const title = document.getElementById("prompt").value;
-
-  const response = await fetch("/api/save-game", {
-    method: "POST",
-    body: JSON.stringify({ title, code })
-  });
-
-  const data = await response.json();
-
-  if (data.success) {
-    document.getElementById("publishOutput").innerHTML =
-      `✅ Game published! <a href="${data.url}" target="_blank">${data.url}</a>`;
-  } else {
-    document.getElementById("publishOutput").innerHTML =
-      "❌ Could not publish (server error)";
-  }
-});
