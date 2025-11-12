@@ -1,76 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hero.ai – AI Game Generator</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #0f172a;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-      }
-
-      h1 {
-        font-size: 2em;
-        margin-bottom: 10px;
-      }
-
-      textarea {
-        width: 300px;
-        height: 100px;
-        margin-bottom: 10px;
-        padding: 10px;
-        font-size: 1em;
-        border-radius: 10px;
-        border: none;
-        resize: none;
-      }
-
-      button {
-        background-color: #3b82f6;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 10px;
-        font-size: 1em;
-        cursor: pointer;
-      }
-
-      button:hover {
-        background-color: #2563eb;
-      }
-
-      #status {
-        margin-top: 20px;
-        font-size: 1.1em;
-      }
-
-      pre {
-        margin-top: 20px;
-        width: 80%;
-        background-color: #1e293b;
-        padding: 15px;
-        border-radius: 10px;
-        overflow-x: auto;
-        max-height: 300px;
-      }
-    </style>
-  </head>
-
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hero.ai – AI Game Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
     <h1>Hero.ai – AI Game Generator</h1>
-    <textarea id="prompt" placeholder="Describe the game you want..."></textarea>
-    <button id="generateBtn">Generate Game</button>
-    <p id="status">Status: 💤 Waiting...</p>
-    <pre id="gameCode"></pre>
+    <textarea id="prompt" placeholder="Describe your game idea..."></textarea>
+    <button id="generate-btn">Generate Game</button>
+    <p id="status"></p>
+    <iframe id="game-frame" style="width:100%; height:500px; border:none; display:none;"></iframe>
+  </div>
 
-    <script src="game.js"></script>
-  </body>
+  <script src="game.js"></script>
+</body>
 </html>
