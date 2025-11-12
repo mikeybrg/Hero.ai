@@ -1,30 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hero.ai – AI Game Generator</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hero.ai – AI Game Generator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #0f172a;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
 
-<body>
-  <h1>Hero.ai – AI Game Generator</h1>
+      h1 {
+        font-size: 2em;
+        margin-bottom: 10px;
+      }
 
-  <div class="container">
+      textarea {
+        width: 300px;
+        height: 100px;
+        margin-bottom: 10px;
+        padding: 10px;
+        font-size: 1em;
+        border-radius: 10px;
+        border: none;
+        resize: none;
+      }
+
+      button {
+        background-color: #3b82f6;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 1em;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #2563eb;
+      }
+
+      #status {
+        margin-top: 20px;
+        font-size: 1.1em;
+      }
+
+      pre {
+        margin-top: 20px;
+        width: 80%;
+        background-color: #1e293b;
+        padding: 15px;
+        border-radius: 10px;
+        overflow-x: auto;
+        max-height: 300px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Hero.ai – AI Game Generator</h1>
     <textarea id="prompt" placeholder="Describe the game you want..."></textarea>
-
     <button id="generateBtn">Generate Game</button>
-<button id="publishBtn">Publish Game</button>
-<div id="publishOutput"></div>
+    <p id="status">Status: 💤 Waiting...</p>
+    <pre id="gameCode"></pre>
 
-    <div id="output"></div>
-
-    <!-- ✅ THE GAME CANVAS (THIS WAS MISSING) -->
-    <div class="game-container">
-      <canvas id="gameCanvas" width="600" height="400"></canvas>
-    </div>
-  </div>
-
-  <script src="game.js"></script>
-</body>
+    <script src="game.js"></script>
+  </body>
 </html>
