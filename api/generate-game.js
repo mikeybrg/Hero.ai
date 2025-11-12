@@ -1,35 +1,33 @@
 import OpenAI from "openai";
 
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 export default async function handler(req, res) {
   try {
-    const { prompt } = req.body;
+    // If running on Next.js, use req.body — if on Vercel Edge Functions, use await req.json()
+    const body = req.body || (await req.json());
+    const { prompt } = body;
+
     if (!prompt) {
-      return res.status(400).json({ error: "Missing prompt" });
+      return res.status(400).json({ error: "Missing 'prompt' in request body." });
     }
 
-    // ✅ Make sure this is pulling from your Vercel environment variable
-    const apiKey = process.env.OPENAI_API_KEY;
+    console.log("🎮 Generating game for prompt:", prompt);
 
-    if (!apiKey) {
-      console.error("❌ Missing OpenAI API key in environment variables");
-      return res.status(500).json({ error: "Server missing API key" });
-    }
-
-    const openai = new OpenAI({ apiKey });
-
-    // ✅ Generate code with GPT
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "You are an AI that writes playable HTML5 JavaScript games." },
-        { role: "user", content: `Make this game playable in the browser: ${prompt}` }
-      ]
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: `Generate a playable HTML + JavaScript game (no external libraries) for this prompt: "${prompt}". 
+Return ONLY the HTML + JS code.`,
     });
 
-    const code = response.choices[0]?.message?.content || "// No output";
-    res.status(200).json({ code });
-  } catch (err) {
-    console.error("❌ Server error:", err);
-    res.status(500).json({ error: "OpenAI Error", details: err });
+    const text = response.output[0].content[0].text;
+
+    console.log("✅ Game generated successfully!");
+    res.status(200).json({ game: text });
+  } catch (error) {
+    console.error("❌ Error generating game:", error);
+    res.status(500).json({ error: error.message || "Unknown server error." });
   }
 }
