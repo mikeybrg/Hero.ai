@@ -1,22 +1,59 @@
-async function generateGame(prompt) {
+export default async function handler(req, res) {
   try {
-    const response = await fetch("/api/generate-game", {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({ error: "Missing prompt" });
+    }
+
+    const apiKey = process.env.OPENAI_API_KEY;
+
+    if (!apiKey) {
+      return res.status(500).json({ error: "Missing OpenAI API key" });
+    }
+
+    // Call OpenAI API
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt }),
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You generate playable HTML5 games. Return ONLY the HTML/CSS/JS code."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      })
     });
 
     const data = await response.json();
 
-    if (!response.ok) {
-      console.error("Backend Error:", data);
-      throw new Error(data.error || "Failed to generate game");
+    if (data.error) {
+      return res.status(500).json({ error: data.error.message });
     }
 
-    return data.code;
+    const gameCode = data.choices?.[0]?.message?.content || "";
 
-  } catch (err) {
-    console.error("Error generating game:", err);
-    throw err;
+    return res.status(200).json({
+      success: true,
+      code: gameCode
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message || "Unknown server error"
+    });
   }
 }
