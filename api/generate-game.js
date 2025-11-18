@@ -1,59 +1,49 @@
-export default async function handler(req, res) {
+import { NextResponse } from "next/server";
+
+export async function POST(req) {
   try {
-    if (req.method !== "POST") {
-      return res.status(405).json({ error: "Method not allowed" });
-    }
+    const { prompt } = await req.json();
 
-    const { prompt } = req.body;
+    const systemPrompt = `
+You are GameBuilderGPT. You ONLY output a single, complete HTML file that runs fully inside an iframe srcdoc.
+Requirements:
+- Full <html>, <head>, <body>.
+- Clean CSS.
+- Good layout + animations.
+- Game must be fully playable.
+- Include JS inside <script>.
+- No external scripts.
+- No imports.
+- No markdown.
+- No code fences.
+- No JSON.
+- No backticks.
+    `;
 
-    if (!prompt) {
-      return res.status(400).json({ error: "Missing prompt" });
-    }
-
-    const apiKey = process.env.OPENAI_API_KEY;
-
-    if (!apiKey) {
-      return res.status(500).json({ error: "Missing OpenAI API key" });
-    }
-
-    // Call OpenAI API
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
+        Authorization: \`Bearer \${process.env.OPENAI_API_KEY}\`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content: "You generate playable HTML5 games. Return ONLY the HTML/CSS/JS code."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
+        model: "google/gemini-2.0-flash-thinking-exp",
+        input: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: "Create a complete HTML5 game: " + prompt }
         ]
-      })
+      }),
     });
 
     const data = await response.json();
+    const html =
+      data.output_text ||
+      data.choices?.[0]?.message?.content ||
+      "";
 
-    if (data.error) {
-      return res.status(500).json({ error: data.error.message });
-    }
-
-    const gameCode = data.choices?.[0]?.message?.content || "";
-
-    return res.status(200).json({
-      success: true,
-      code: gameCode
-    });
-
-  } catch (error) {
-    return res.status(500).json({
-      error: error.message || "Unknown server error"
-    });
+    return NextResponse.json({ code: html });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
