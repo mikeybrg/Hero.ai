@@ -1,36 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Game Builder</title>
-  <style>
-    body { margin: 0; padding: 20px; background: #111; color: #fff; font-family: sans-serif; }
-    #gameFrame { width: 100%; height: 600px; border: 0; background: #222; }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hero.ai – Golf Putting Detection</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.20.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 </head>
 <body>
 
-<h1>Game Builder</h1>
-<input id="prompt" placeholder="Describe a game..." style="width:80%;padding:10px;">
-<button onclick="generate()">Generate</button>
+    <h1>Hero.ai Putting App</h1>
+    <p id="loading">Loading Model...</p>
 
-<br><br>
+    <video id="video" autoplay playsinline></video>
 
-<iframe id="gameFrame"></iframe>
+    <div id="result">Waiting...</div>
 
-<script>
-async function generate() {
-  const prompt = document.getElementById("prompt").value;
-
-  const res = await fetch("/api/generate-game", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt }),
-  });
-
-  const data = await res.json();
-  document.getElementById("gameFrame").srcdoc = data.code;
-}
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
