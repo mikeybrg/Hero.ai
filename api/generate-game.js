@@ -1,49 +1,26 @@
-import { NextResponse } from "next/server";
-
-export async function POST(req) {
+export default async function handler(req, res) {
   try {
-    const { prompt } = await req.json();
-
-    const systemPrompt = `
-You are GameBuilderGPT. You ONLY output a single, complete HTML file that runs fully inside an iframe srcdoc.
-Requirements:
-- Full <html>, <head>, <body>.
-- Clean CSS.
-- Good layout + animations.
-- Game must be fully playable.
-- Include JS inside <script>.
-- No external scripts.
-- No imports.
-- No markdown.
-- No code fences.
-- No JSON.
-- No backticks.
-    `;
-
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const { prompt } = req.body;
+    
+    const completion = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "google/gemini-2.0-flash-thinking-exp",
-        input: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: "Create a complete HTML5 game: " + prompt }
-        ]
-      }),
+        model: "gpt-4.1",
+        input: `Create a complete playable mini-game using ONLY HTML, CSS, and JS in one file. No external files. The theme is: ${prompt}`
+      })
     });
 
-    const data = await response.json();
-    const html =
-      data.output_text ||
-      data.choices?.[0]?.message?.content ||
-      "";
+    const data = await completion.json();
 
-    return NextResponse.json({ code: html });
+    res.status(200).json({
+      html: data.output_text
+    });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    res.status(500).json({ error: "Failed to generate game" });
   }
 }
