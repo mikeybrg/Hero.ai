@@ -1,20 +1,20 @@
-import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-export async function POST(req) {
-  try {
-    const { id, code } = await req.json();
+export default async function handler(req, res) {
+  const { id, html } = req.body;
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_KEY
-    );
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 
-    await supabase.from("games").upsert({ id, code });
+  const { error } = await supabase.from("games").insert([
+    { id, html }
+  ]);
 
-    return NextResponse.json({ success: true });
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e.message }, { status: 500 });
+  if (error) {
+    return res.status(500).json({ error });
   }
+
+  res.status(200).json({ success: true });
 }
