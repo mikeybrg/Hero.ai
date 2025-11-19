@@ -1,34 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Shared Game</title>
+  <title>Game</title>
 </head>
 <body>
-  <div id="game"></div>
+  <div id="game">Loading...</div>
 
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    const SUPABASE_URL = "https://wbggwezvocfreijjfslg.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndiZ2d3ZXp2b2NmcmVpampmc2xnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwODY1NjgsImV4cCI6MjA3NjY2MjU2OH0.PrHa4y8KiCHwEektM1oCms4W9qKEeC6eRtxzPCAInlw";
+    const supabase = createClient(
+      "https://wbggwezvocfreijjfslg.supabase.co",
+      "YOUR_SUPABASE_ANON_KEY"
+    );
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const id = window.location.pathname.split("/").pop();
 
-    const path = window.location.pathname;
-    const id = path.split("/").pop().replace(".html", "");
-
-    async function loadGame() {
-      const { data, error } = await supabase.from("games").select("html").eq("id", id).single();
+    async function load() {
+      const { data, error } = await supabase
+        .from("games")
+        .select("html")
+        .eq("id", id)
+        .single();
 
       if (error) {
-        document.body.innerHTML = "⚠️ Error loading game.";
+        document.getElementById("game").innerHTML = "Error loading game";
         return;
       }
 
       document.getElementById("game").innerHTML = data.html;
     }
 
-    loadGame();
+    load();
   </script>
 </body>
 </html>
