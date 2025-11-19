@@ -1,22 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hero.ai – Golf Putting Detection</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.20.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+  <title>Hero.ai – Create a Game</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <h1>Create a Mini Game</h1>
 
-    <h1>Hero.ai Putting App</h1>
-    <p id="loading">Loading Model...</p>
+  <textarea id="prompt" placeholder="Describe your game idea..."></textarea>
+  <button id="generate">Generate Game</button>
 
-    <video id="video" autoplay playsinline></video>
+  <div id="status"></div>
 
-    <div id="result">Waiting...</div>
-
-    <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
