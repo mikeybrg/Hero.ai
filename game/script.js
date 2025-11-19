@@ -1,58 +1,29 @@
+document.getElementById("generate").onclick = async () => {
+  const prompt = document.getElementById("prompt").value;
+  const status = document.getElementById("status");
 
-const modelURL = "https://mikeybrg.github.io/Hero.ai/model.json";
+  status.innerHTML = "⏳ Generating game...";
 
-let model;
-let video;
-let isLoaded = false;
+  const genRes = await fetch("/api/generate-game", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt })
+  });
 
-// Load the model
-async function loadModel() {
-    const loadingText = document.getElementById("loading");
-    loadingText.innerText = "Loading Model...";
+  const genData = await genRes.json();
+  const html = genData.html;
 
-    try {
-        model = await tmImage.load(modelURL, {
-            crossOrigin: "anonymous"
-        });
+  const id = Math.random().toString(36).slice(2, 10);
 
-        isLoaded = true;
-        loadingText.innerText = "Model Loaded!";
-        startCamera();
-    } catch (error) {
-        console.error("MODEL LOAD ERROR:", error);
-        loadingText.innerText = "Failed to load model.";
-    }
-}
+  status.innerHTML = "💾 Saving game...";
 
-// Start front camera
-async function startCamera() {
-    video = document.getElementById("video");
+  await fetch("/api/save-game", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, html })
+  });
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" }
-    });
-
-    video.srcObject = stream;
-    video.addEventListener("loadeddata", () => {
-        predictLoop();
-    });
-}
-
-// Prediction loop
-async function predictLoop() {
-    if (!isLoaded) return;
-
-    const prediction = await model.predict(video);
-    let best = prediction[0];
-
-    for (let p of prediction) {
-        if (p.probability > best.probability) best = p;
-    }
-
-    document.getElementById("result").innerText =
-        best.className === "Make" ? "✅ MAKE!" : "❌ MISS";
-
-    requestAnimationFrame(predictLoop);
-}
-
-loadModel();
+  status.innerHTML = "✅ Done!";
+  
+  window.location.href = `/game/${id}`;
+};
